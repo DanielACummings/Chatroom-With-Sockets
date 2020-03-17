@@ -1,13 +1,16 @@
-require("dotenv").config();
-require = require("esm")(module);
-module.exports = require("./server/main");
-
 // from Socket.io
-var app = require('express')()
-var http = require('http').createServer(app)
+let app = require('express')()
+let http = require('http').createServer(app)
+let io = require('socket.io')(http)
 
 app.get('/', function (req, res) {
-  res.send('<h1>Hello world</h1>')
+  res.sendFile(__dirname + '/client/index.html')
+})
+
+io.on('connection', function (socket) {
+  socket.on('chat message', function (msg) {
+    io.emit('chat message', msg)
+  })
 })
 
 http.listen(4000, function () {
